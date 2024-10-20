@@ -26,6 +26,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -62,10 +66,41 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ArtSpaceApp(modifier: Modifier = Modifier) {
+
+    // Arrays to hold character images
+    val imageIds = arrayOf(
+        R.drawable.captainamerica,
+        R.drawable.ironman,
+        R.drawable.thor,
+        R.drawable.hulk,
+        R.drawable.drstrange
+    )
+
+    // Arrays to hold character names
+    val name = arrayOf(
+        "Captain America",
+        "Iron Man",
+        "Thor",
+        "Hulk",
+        "Doctor Strange"
+    )
+
+    // Mutable state to keep track of the currently displayed artwork index
+    var CharacterIndex by remember { mutableStateOf(0) }
+
+
     tasks(
-        imagePainter = painterResource(R.drawable.captainamerica),
-        name = stringResource(R.string.ch_name),
-        title = stringResource(R.string.title)
+        imagePainter = painterResource(imageIds[CharacterIndex]),
+        name = name[CharacterIndex],
+        title = stringResource(R.string.title),
+        onNextClick = {
+            // Update the index to the next artwork (cycle back to 0 if at the end)
+            CharacterIndex = (CharacterIndex+1)%name.size
+        },
+        onPrevClick = {
+            // Update the index to the previous artwork (cycle back to the last if at the start)
+            CharacterIndex = (CharacterIndex-1 + name.size)%name.size
+        }
     )
 }
 
@@ -74,6 +109,8 @@ fun tasks(
     imagePainter: Painter,
     name: String,
     title: String,
+    onNextClick: () -> Unit, // Click handler for the "Next" button
+    onPrevClick: () -> Unit, // Click handler for the "Prev" button
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -119,16 +156,16 @@ fun tasks(
 
                 Spacer(modifier = Modifier.height(50.dp)) // Adjust top spacing
                 Image(
-                    painter = imagePainter,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(500.dp) // Adjust size to better fit the layout
-                        .padding(16.dp) // Add some padding around the image
-                        .background(
-                            Color.White,
-                            shape = RoundedCornerShape(16.dp)
-                        ) // White background for contrast
-                        .border(3.dp, Color(0xFF6200EE), RoundedCornerShape(16.dp)) // Optional: border around the image
+                        painter = imagePainter,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(500.dp) // Adjust size to better fit the layout
+                    .padding(8.dp) // Add some padding around the image
+                    .background(
+                        Color(0xFFE0F7FA),
+                        shape = RoundedCornerShape(16.dp)
+                    ) // White background for contrast
+                    .border(3.dp, Color(0xFF6200EE), RoundedCornerShape(16.dp)) // Optional: border around the image
                 )
             }
         }
@@ -172,20 +209,20 @@ fun tasks(
         ) {
             StyledButton(
                 text = "Prev",
-                onClick = {}
+                onClick = onPrevClick
             )
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
             StyledButton(
                 text = "Next",
-                onClick = {}
-            )
+                onClick = onNextClick
+                )
         }
     }
 }
 
 @Composable //Styling next and previous buttons
-fun StyledButton(text: String, onClick: () -> Unit) {
+fun StyledButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier ) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
