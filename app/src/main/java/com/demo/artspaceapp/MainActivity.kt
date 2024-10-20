@@ -28,11 +28,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,7 +64,8 @@ class MainActivity : ComponentActivity() {
 fun ArtSpaceApp(modifier: Modifier = Modifier) {
     tasks(
         imagePainter = painterResource(R.drawable.captainamerica),
-        name = stringResource(R.string.ch_name)
+        name = stringResource(R.string.ch_name),
+        title = stringResource(R.string.title)
     )
 }
 
@@ -68,6 +73,7 @@ fun ArtSpaceApp(modifier: Modifier = Modifier) {
 fun tasks(
     imagePainter: Painter,
     name: String,
+    title: String,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -93,14 +99,35 @@ fun tasks(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Spacer(modifier = Modifier.height(100.dp)) // Adjust top spacing
+                Spacer(modifier = Modifier.height(25.dp))
+                Text(
+                    text = title,
+                    fontSize = 36.sp, // Larger font for emphasis
+                    color = Color.White, // White text color for contrast
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold, // Make the text bold
+                    modifier = Modifier
+                        .background(
+                            Brush.horizontalGradient( // Gradient background
+                                colors = listOf(Color(0xFF2196F3), Color(0xFF03DAC5)) // Blue to Teal
+                            )
+                        )
+                        .padding(16.dp) // Padding for space around text
+                        .shadow(8.dp), // Shadow to give depth
+                )
+
+
+                Spacer(modifier = Modifier.height(50.dp)) // Adjust top spacing
                 Image(
                     painter = imagePainter,
                     contentDescription = null,
                     modifier = Modifier
                         .size(500.dp) // Adjust size to better fit the layout
                         .padding(16.dp) // Add some padding around the image
-                        .background(Color.White, shape = RoundedCornerShape(16.dp)) // White background for contrast
+                        .background(
+                            Color.White,
+                            shape = RoundedCornerShape(16.dp)
+                        ) // White background for contrast
                         .border(3.dp, Color(0xFF6200EE), RoundedCornerShape(16.dp)) // Optional: border around the image
                 )
             }
@@ -124,7 +151,10 @@ fun tasks(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(vertical = 8.dp) // Vertical padding for spacing
-                    .background(Color(0xFF1976D2), shape = RoundedCornerShape(8.dp)) // Background for the text
+                    .background(
+                        Color(0xFF1976D2),
+                        shape = RoundedCornerShape(8.dp)
+                    ) // Background for the text
                     .padding(horizontal = 16.dp) // Horizontal padding inside the background
 
             )
@@ -154,7 +184,7 @@ fun tasks(
     }
 }
 
-@Composable //Styling next and prev buttons
+@Composable //Styling next and previous buttons
 fun StyledButton(text: String, onClick: () -> Unit) {
     Button(
         onClick = onClick,
